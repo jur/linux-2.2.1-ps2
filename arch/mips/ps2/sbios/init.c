@@ -27,10 +27,16 @@ struct ps2_bootinfo *ps2_bootinfo = &ps2_bootinfox;
 
 char arcs_cmdline[CL_SIZE] = "root=/dev/hda1";
 
+static void sbios_prints(const char *text)
+{
+	printk("SBIOS: %s", text);
+}
+
 int __init prom_init(int argc, char **argv, char **envp)
 {
 	struct ps2_bootinfo *bootinfo;
 	int oldbootinfo = 0;
+	int version;
 
 	/* default bootinfo */
 	memset(&ps2_bootinfox, 0, sizeof(struct ps2_bootinfo));
@@ -86,6 +92,20 @@ int __init prom_init(int argc, char **argv, char **envp)
 	       bootinfo, oldbootinfo ? "(old style)" : "");
 	printk("boot option string at 0x%08x: %s\n",
 	       ps2_bootinfo->opt_string, arcs_cmdline);
+
+	version = sbios(SB_GETVER, 0);
+	printk("PlayStation 2 SIF BIOS: %04x\n", version);
+
+	/* Register Callback for debug output. */
+	sbios(SB_SET_PRINTS_CALLBACK, sbios_prints);
+
+	if (version == 0x200) {
+		/* Beta kit */
+		*(unsigned char *)0x80007c20 = 0;
+	} else if (version == 0x250) {
+		/* 1.0 kit */
+		*(unsigned char *)0x800081b0 = 0;
+	}
 
 	return 0;
 }

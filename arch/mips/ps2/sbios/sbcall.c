@@ -20,6 +20,33 @@
 #include <asm/ps2/sifdefs.h>
 #include <asm/ps2/sbcall.h>
 
+typedef struct t_SifCmdHeader
+{
+	u32 size;
+	void *dest;
+	int cid;
+	u32 unknown;
+} SifCmdHeader_t;
+
+static uint32_t usrCmdHandler[256];
+
+typedef struct {
+	struct t_SifCmdHeader    sifcmd;
+	u32 data[16];
+} iop_sifCmdBufferIrq_t;
+
+void handleRPCIRQ(iop_sifCmdBufferIrq_t *sifCmdBufferIrq, void *arg)
+{
+	extern void handleSimulatedIRQ(int irq);
+
+	handleSimulatedIRQ(sifCmdBufferIrq->data[0]);
+}
+
+static void handlePowerOff(void *sifCmdBuffer, void *arg)
+{
+	kill_proc(1, SIGPWR, 1);
+}
+
 /*
  *  SIF DMA functions
  */
@@ -252,12 +279,36 @@ static void sif0_dma_handler(int irq, void *dev_id, struct pt_regs *regs)
 
 __initfunc(int ps2sif_init(void))
 {
+    struct sb_sifaddcmdhandler_arg addcmdhandlerparam;
+    struct sb_sifsetcmdbuffer_arg setcmdhandlerbufferparam;
+
+    setcmdhandlerbufferparam.db = usrCmdHandler;
+    setcmdhandlerbufferparam.size = sizeof(usrCmdHandler) / 8;
+
     if (sbios(SB_SIFINIT, 0) < 0)
 	return -1;
     if (sbios(SB_SIFINITCMD, 0) < 0)
 	return -1;
     if (request_irq(IRQ_DMAC_5, sif0_dma_handler, SA_INTERRUPT, "SIF0 DMA", NULL))
 	return -1;
+    if (sbios(SB_SIFSETCMDBUFFER, &setcmdhandlerbufferparam) < 0) {
+        printk("Failed to initialize EEDEBUG handler (1).\n");
+    } else {
+        addcmdhandlerparam.fid = 0x20;
+        addcmdhandlerparam.func = handleRPCIRQ;
+        addcmdhandlerparam.data = NULL;
+        if (sbios(SB_SIFADDCMDHANDLER, &addcmdhandlerparam) < 0) {
+            printk("Failed to initialize SIF IRQ handler.\n");
+        }
+
+        /* The module poweroff.irx is configured to inform us. */
+        addcmdhandlerparam.fid = 20;
+        addcmdhandlerparam.func = handlePowerOff;
+        addcmdhandlerparam.data = NULL;
+        if (sbios(SB_SIFADDCMDHANDLER, &addcmdhandlerparam) < 0) {
+            printk("Failed to initialize SIF Power Off handler.\n");
+        }
+    }
     if (sbios(SB_SIFINITRPC, 0) < 0)
 	return -1;
 

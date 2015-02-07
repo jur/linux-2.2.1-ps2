@@ -2210,7 +2210,11 @@ end:
 	printk(" done\n");
 	return;
 }
-
+#else
+int smap_init_module(void)
+{
+	return(smap_probe());
+}
 #endif /* MODULE */
 
 /*--------------------------------------------------------------------------*/

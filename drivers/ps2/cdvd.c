@@ -94,6 +94,9 @@ struct ps2cdvd_event {
 	void *arg;
 };
 
+#define DVD_DATA_SECT_SIZE 2064
+#define DVD_DATA_OFFSET 12
+
 /*
  * function prototypes
  */
@@ -151,7 +154,7 @@ int ps2cdvd_read_ahead = 32;
 #if 1
 unsigned long ps2cdvd_debug = DBG_DIAG;
 #else
-unsigned long ps2cdvd_debug = (DBG_DIAG | DBG_READ | DBG_INFO);
+unsigned long ps2cdvd_debug = (DBG_DIAG | DBG_READ | DBG_INFO | DBG_STATE);
 #endif
 static int ps2cdvd_major = PS2CDVD_MAJOR;
 static int ps2cdvd_blocksizes[1] = { DATA_SECT_SIZE, };
@@ -588,10 +591,19 @@ ps2cdvd_enter_leave(int state, int enter)
 	  break;
 	case STAT_LABEL_READ:
 	  if (enter) {
-	    if (ps2cdvd_send_read(16, 1, labelbuf, &DataMode) < 0) {
-	      DPRINT(DBG_DIAG, "send_read() failed\n");
-	      res_state = ps2cdvd_enter(STAT_ERROR);
-	    }
+            if (media_mode == SCECdDVDV) {
+	      if (ps2cdvd_send_read_dvd(16, 1, labelbuf, &DataMode) < 0) {
+	        DPRINT(DBG_DIAG, "ps2cdvd_send_read_dvd() failed\n");
+                res_state = ps2cdvd_enter(STAT_ERROR);
+              } else {
+                memcpy(labelbuf, labelbuf + DVD_DATA_OFFSET, DATA_SECT_SIZE);
+              }
+            } else {
+	      if (ps2cdvd_send_read(16, 1, labelbuf, &DataMode) < 0) {
+	        DPRINT(DBG_DIAG, "ps2cdvd_send_read() failed\n");
+                res_state = ps2cdvd_enter(STAT_ERROR);
+              }
+            }
 	  } else {
 	  }
 	  break;
@@ -626,15 +638,27 @@ ps2cdvd_enter_leave(int state, int enter)
 	    DPRINT(DBG_READ, "REQ %p: sec=%ld  n=%ld  buf=%p\n",
 		   CURRENT, CURRENT->sector,
 		   CURRENT->current_nr_sectors, CURRENT->buffer);
-	    if (ps2cdvd_send_read(CURRENT->sector/4,
-				  ps2cdvd_databuf_size,
-				  ps2cdvd_databuf,
-				  &DataMode) < 0) {
-	      DPRINT(DBG_DIAG, "send_readdata() failed\n");
-	      res_state = ps2cdvd_enter(STAT_ERROR);
-	    } else {
-	      ps2cdvd_databuf_addr = CURRENT->sector/4;
-	    }
+            if (media_mode == SCECdDVDV) {
+	      if (ps2cdvd_send_read_dvd(CURRENT->sector/4,
+				    ps2cdvd_databuf_size,
+				    ps2cdvd_databuf,
+				    &DataMode) < 0) {
+	        DPRINT(DBG_DIAG, "ps2cdvd_send_read_dvd() failed\n");
+	        res_state = ps2cdvd_enter(STAT_ERROR);
+	      } else {
+	        ps2cdvd_databuf_addr = CURRENT->sector/4;
+	      }
+            } else {
+	      if (ps2cdvd_send_read(CURRENT->sector/4,
+				    ps2cdvd_databuf_size,
+				    ps2cdvd_databuf,
+				    &DataMode) < 0) {
+	        DPRINT(DBG_DIAG, "ps2cdvd_send_read() failed\n");
+	        res_state = ps2cdvd_enter(STAT_ERROR);
+	      } else {
+	        ps2cdvd_databuf_addr = CURRENT->sector/4;
+	      }
+            }
 	  } else {
 	  }
 	  break;
@@ -643,16 +667,29 @@ ps2cdvd_enter_leave(int state, int enter)
 	    DPRINT(DBG_READ, "REQ %p: sec=%ld  n=%ld  buf=%p (EOM retry)\n",
 		   CURRENT, CURRENT->sector,
 		   CURRENT->current_nr_sectors, CURRENT->buffer);
-	    if (ps2cdvd_send_read(CURRENT->sector/4 - ps2cdvd_databuf_size + 1,
-				  ps2cdvd_databuf_size,
-				  ps2cdvd_databuf,
-				  &DataMode) < 0) {
-	      DPRINT(DBG_DIAG, "send_readdata() failed\n");
-	      res_state = ps2cdvd_enter(STAT_ERROR);
-	    } else {
-	      ps2cdvd_databuf_addr =
-		CURRENT->sector/4 - ps2cdvd_databuf_size + 1;
-	    }
+            if (media_mode == SCECdDVDV) {
+	      if (ps2cdvd_send_read_dvd(CURRENT->sector/4 - ps2cdvd_databuf_size + 1,
+				    ps2cdvd_databuf_size,
+				    ps2cdvd_databuf,
+				    &DataMode) < 0) {
+	        DPRINT(DBG_DIAG, "ps2cdvd_send_read_dvd() failed\n");
+	        res_state = ps2cdvd_enter(STAT_ERROR);
+	      } else {
+	        ps2cdvd_databuf_addr =
+		  CURRENT->sector/4 - ps2cdvd_databuf_size + 1;
+	      }
+            } else {
+	      if (ps2cdvd_send_read(CURRENT->sector/4 - ps2cdvd_databuf_size + 1,
+				    ps2cdvd_databuf_size,
+				    ps2cdvd_databuf,
+				    &DataMode) < 0) {
+	        DPRINT(DBG_DIAG, "ps2cdvd_send_read() failed\n");
+	        res_state = ps2cdvd_enter(STAT_ERROR);
+	      } else {
+	        ps2cdvd_databuf_addr =
+		  CURRENT->sector/4 - ps2cdvd_databuf_size + 1;
+	      }
+            }
 	  } else {
 	  }
 	  break;
@@ -813,9 +850,12 @@ ps2cdvd_state_machine(struct ps2cdvd_event* ev)
 		media_mode = SCECdCD;
 		break;
 	      case SCECdPS2DVD:		/* PS2 DVD */
-	      case SCECdDVDV:		/* DVD video */
 		new_state = STAT_SET_MMODE;
 		media_mode = SCECdDVD;
+		break;
+	      case SCECdDVDV:		/* DVD video */
+		new_state = STAT_SET_MMODE;
+		media_mode = SCECdDVDV;
 		break;
 	      default:
 		printk(KERN_CRIT "ps2cdvd: internal error at %s(%d)\n",
@@ -1087,9 +1127,15 @@ ps2cdvd_state_machine(struct ps2cdvd_event* ev)
 	      while (CURRENT != NULL &&
 		     ps2cdvd_databuf_addr <= CURRENT->sector/4 &&
 		     CURRENT->sector/4 < ps2cdvd_databuf_addr + ps2cdvd_databuf_size) {
-		memcpy(CURRENT->buffer,
-		       ps2cdvd_databuf + DATA_SECT_SIZE * (CURRENT->sector/4 - ps2cdvd_databuf_addr),
-		       DATA_SECT_SIZE);
+                if (media_mode == SCECdDVDV) {
+                  memcpy(CURRENT->buffer,
+                         ps2cdvd_databuf + DVD_DATA_OFFSET + DVD_DATA_SECT_SIZE * (CURRENT->sector/4 - ps2cdvd_databuf_addr),
+                         DATA_SECT_SIZE);
+	        } else {
+                  memcpy(CURRENT->buffer,
+		         ps2cdvd_databuf + DATA_SECT_SIZE * (CURRENT->sector/4 - ps2cdvd_databuf_addr),
+		         DATA_SECT_SIZE);
+	        }
 		end_request(1);
 	      }
 	      if (!ps2sif_iswaiting(ps2cdvd_lock) && CURRENT != NULL) {
@@ -1209,6 +1255,7 @@ ps2cdvd_state_machine(struct ps2cdvd_event* ev)
 __initfunc(int ps2cdvd_init(void))
 {
 	int res;
+	unsigned long flags;
 
 	DPRINT(DBG_VERBOSE, "init: get lock\n");
 	if ((ps2cdvd_lock = ps2sif_getlock(PS2LOCK_CDVD)) == NULL) {
@@ -1225,7 +1272,7 @@ __initfunc(int ps2cdvd_init(void))
 	ps2cdvd_state = STAT_WAIT_DISC;
 
 	DPRINT(DBG_VERBOSE, "init: allocate diaklabel buffer\n");
-	labelbuf = kmalloc(2048, GFP_KERNEL);
+	labelbuf = kmalloc(DVD_DATA_SECT_SIZE, GFP_KERNEL);
 	if (labelbuf == NULL) {
 		printk(KERN_ERR "ps2cdvd: Can't allocate buffer\n");
 		ps2cdvd_cleanup();
@@ -1284,10 +1331,13 @@ __initfunc(int ps2cdvd_init(void))
 
 	printk(KERN_INFO "PS2 CD/DVD-ROM driver\n");
 
+	save_flags(flags);
+	cli();
 	if (ps2cdvd_lowlevel_lock() == 0)
 	  ps2cdvd_state = ps2cdvd_enter(STAT_INIT_TRAYSTAT);
 	else
 	  ps2cdvd_state = ps2cdvd_enter(STAT_WAIT_DISC);
+	restore_flags(flags);
 
 	return 0;
 }

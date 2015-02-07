@@ -103,6 +103,7 @@ typedef struct _sif_queue_data {
 /* calling error */
 #define SIF_RPCE_GETP	1	/* fail to get packet data */
 #define SIF_RPCE_SENDP	2	/* fail to send dma packet */
+#define E_SIF_PKT_ALLOC 0xd610	/* Can't allocate SIF packet. */
 
 /* functions */
 

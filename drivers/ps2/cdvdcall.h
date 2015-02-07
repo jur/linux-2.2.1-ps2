@@ -70,6 +70,23 @@ static __inline__ int ps2cdvdcall_read(u_int lbn, u_int sectors, void *buf,
 	return (res);
 }
 
+static __inline__ int ps2cdvdcall_read_dvd(u_int lbn, u_int sectors, void *buf,
+				       struct sceCdRMode *rmode)
+{
+	struct sbr_cdvd_read_arg arg;
+	int res;
+
+	arg.lbn = lbn;
+	arg.sectors = sectors;
+	arg.buf = buf;
+	arg.rmode = rmode;
+
+	if (sbios_rpc(SBR_CDVD_READ_DVD, &arg, &res) < 0)
+		return (-1);
+
+	return (res);
+}
+
 static __inline__ int ps2cdvdcall_stop(void)
 {
 	int res;

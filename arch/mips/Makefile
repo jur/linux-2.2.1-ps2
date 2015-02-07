@@ -18,7 +18,7 @@
 #
 ifdef CONFIG_CPU_LITTLE_ENDIAN
 ifdef CONFIG_CPU_R5900
-tool-prefix	= mipsEEel-linux-
+tool-prefix	= /usr/local/ps2/bin/ee-
 else
 tool-prefix	= mipsel-linux-
 endif
@@ -54,12 +54,12 @@ MODFLAGS	+= -mlong-calls
 # machines may also.
 #
 ifdef CONFIG_ELF_KERNEL
-CFLAGS		+= -G 0 -mno-abicalls -fno-pic
+CFLAGS		+= -G 0 -mno-abicalls
 LINKFLAGS	+= -G 0
 LD_RFLAG	+= -G 0
 endif
 ifdef CONFIG_ECOFF_KERNEL
-CFLAGS		+= -G 0 -mno-abicalls -fno-pic
+CFLAGS		+= -G 0 -mno-abicalls
 LINKFLAGS	+= -G 0 -oformat ecoff-littlemips
 LD_RFLAG	+= -G 0
 endif
@@ -187,7 +187,7 @@ endif
 # The pipe options is bad for my low-mem machine
 # Uncomment this if you want this.
 #
-CFLAGS		+= -pipe
+#CFLAGS		+= -pipe
 
 HEAD := arch/mips/kernel/head.o arch/mips/kernel/init_task.o
 

@@ -39,6 +39,9 @@ struct sb_setgscrt_arg {
     int *dx1, *dy1, *dx2, *dy2;
 };
 
+/** Debug output in TGE (not supported by RTE). */
+#define SB_SET_PRINTS_CALLBACK 15
+
 /*
  *  SIF DMA services
  */
@@ -498,5 +501,8 @@ struct sb_cdvd_powerhook_arg {
   void (*func)(void *);
   void *arg;
 };
+
+/* Uses sbr_cdvd_read_arg */
+#define SBR_CDVD_READ_DVD		196
 
 #endif /* __ASM_PS2_SBCALL_H */

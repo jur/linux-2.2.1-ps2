@@ -37,6 +37,8 @@ extern int prom_putchar(char c);
 extern void ps2_ide_port_found(ide_ioreg_t base);
 extern int ps2sif_init(void);
 extern int ps2lock_init(void);
+extern int smaprpc_init_module(void);
+extern int smap_init_module(void);
 
 extern struct ide_ops ps2_ide_ops;
 extern struct rtc_ops ps2_rtc_ops;
@@ -67,6 +69,10 @@ void ps2_dev_init(void)
 #endif
 #ifdef CONFIG_PS2_PAD
 	ps2pad_init();
+#endif
+#ifdef CONFIG_PS2_ETHER_SMAP
+	smaprpc_init_module();
+	smap_init_module();
 #endif
 }
 

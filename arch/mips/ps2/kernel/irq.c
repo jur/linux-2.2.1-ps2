@@ -507,6 +507,35 @@ static inline void irqdispatch_one(int irq, struct pt_regs *regs, void (*mask_ir
 	}
 }
 
+void handleSimulatedIRQ(int irq)
+{
+	struct irqaction *action;
+	int do_random;
+
+	kstat.irqs[0][irq]++;
+	action = irq_action[irq];
+	if (action->flags & SA_INTERRUPT) {
+		/* fast interrupt handler */
+		do {
+			action->handler(irq, action->dev_id, NULL);
+			action = action->next;
+		} while (action);
+	} else {
+		/* normal interrupt handler */
+		if (!(action->flags & SA_INTERRUPT))
+			__sti();
+		do_random = 0;
+		do {
+			do_random |= action->flags;
+			action->handler(irq, action->dev_id, NULL);
+			action = action->next;
+		} while (action);
+		if (do_random & SA_SAMPLE_RANDOM)
+			add_interrupt_randomness(irq);
+		__cli();
+	}
+}
+
 asmlinkage void ps2_intc_irqdispatch(struct pt_regs *regs)
 {
 	int irq, cpu = smp_processor_id();

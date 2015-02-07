@@ -46,6 +46,10 @@
 #include <linux/apm_bios.h>
 #endif
 
+#ifdef CONFIG_PS2
+#include <asm/ps2/powerbutton.h>
+#endif
+
 /*
  * Versions of gcc older than that listed below may actually compile
  * and link okay, but the end product can have subtle run time bugs.
@@ -1360,6 +1364,11 @@ static void __init do_basic_setup(void)
 
 	/* .. filesystems .. */
 	filesystem_setup();
+
+#ifdef CONFIG_PS2
+	/* Disable auto shutdown, because file system could be damged. */
+	ps2_powerbutton_enable_auto_shutoff(0);
+#endif
 
 	/* Mount the root filesystem.. */
 	mount_root();

@@ -20,6 +20,10 @@
 #include <asm/machvec.h>
 #endif
 
+#ifdef CONFIG_PS2
+#include <asm/ps2/powerbutton.h>
+#endif
+
 asmlinkage void sys_sync(void);	/* it's really int */
 extern void unblank_console(void);
 extern int C_A_D;
@@ -57,6 +61,11 @@ NORET_TYPE void panic(const char * fmt, ...)
 	unblank_console();
 
 	notifier_call_chain(&panic_notifier_list, 0, NULL);
+
+#ifdef CONFIG_PS2
+	/* Enable power button, because init will not handle any signals. */
+	ps2_powerbutton_enable_auto_shutoff(-1);
+#endif
 
 #ifdef __mips__
 	traceback_me();

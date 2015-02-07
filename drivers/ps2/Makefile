@@ -77,8 +77,14 @@ else
 endif
 
 # PS2 ethernet
-ifeq ($(CONFIG_PS2_ETHER_SMAP),m)
-  M_OBJS += smap.o
+ifeq ($(CONFIG_PS2_ETHER_SMAP),y)
+    L_OBJS += smap.o
+    L_OBJS += smaprpc.o
+else
+  ifeq ($(CONFIG_PS2_ETHER_SMAP),m)
+    M_OBJS += smap.o
+    M_OBJS += smaprpc.o
+  endif
 endif
 
 include $(TOPDIR)/Rules.make

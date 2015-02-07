@@ -63,6 +63,24 @@ int ps2cdvd_send_read(u_int lbn, u_int sectors, void *buf,
 	return (res);
 }
 
+int ps2cdvd_send_read_dvd(u_int lbn, u_int sectors, void *buf, 
+		      struct sceCdRMode *rmode)
+{
+	int res;
+	static struct sbr_cdvd_read_arg arg;
+
+	arg.lbn = lbn;
+	arg.sectors = sectors;
+	arg.buf = buf;
+	arg.rmode = rmode;
+	carg.arg = &arg;
+
+	while ((res = sbios(SBR_CDVD_READ_DVD, &carg)) == -SIF_RPCE_SENDP)
+		/* busy wait */;
+
+	return (res);
+}
+
 int ps2cdvd_send_stop(void)
 {
 	int res;

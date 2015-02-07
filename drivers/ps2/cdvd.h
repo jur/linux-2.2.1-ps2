@@ -70,6 +70,7 @@ void ps2cdvd_intr(void*, int);
 
 int ps2cdvd_send_ready(int);
 int ps2cdvd_send_read(u_int, u_int, void *, struct sceCdRMode *);
+int ps2cdvd_send_read_dvd(u_int, u_int, void *, struct sceCdRMode *);
 int ps2cdvd_send_stop(void);
 int ps2cdvd_send_gettoc(u_char *, int);
 int ps2cdvd_send_mmode(int media);
