@@ -152,7 +152,7 @@
         "R6000A", "R8000", "R10000", "R4300", "R4650", "R4700", "R5000",     \
         "R5000A", "R4640", "Nevada", "R5900" }
 
-#define CL_SIZE      (80)
+#define CL_SIZE      (256)
 
 #ifndef _LANGUAGE_ASSEMBLY
 
