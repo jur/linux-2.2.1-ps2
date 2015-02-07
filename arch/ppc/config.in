@@ -1,0 +1,179 @@
+# $Id: config.in,v 1.80 1998/11/11 03:54:56 paulus Exp $
+# For a description of the syntax of this configuration file,
+# see the Configure script.
+#
+mainmenu_name "Linux/PowerPC Kernel Configuration"
+
+mainmenu_option next_comment
+comment 'Platform support'
+define_bool CONFIG_PPC y
+choice 'Processor type' \
+	"6xx/7xx	CONFIG_6xx \
+	 860/821	CONFIG_8xx" 6xx/7xx
+
+choice 'Machine Type' \
+	"PowerMac	CONFIG_PMAC \
+	 PReP/MTX	CONFIG_PREP \
+	 CHRP		CONFIG_CHRP \
+	 PowerMac/PReP/CHRP	CONFIG_ALL_PPC \
+  	 APUS           CONFIG_APUS \
+	 MBX		CONFIG_MBX" PowerMac
+
+if [ "$CONFIG_ALL_PPC" != "y" ];then
+  define_bool CONFIG_MACH_SPECIFIC y
+fi
+
+bool 'Symmetric multi-processing support' CONFIG_SMP
+
+endmenu
+
+if [ "$CONFIG_MBX" = "y" ];then
+  define_bool CONFIG_SERIAL_CONSOLE y
+fi
+
+mainmenu_option next_comment
+comment 'General setup'
+
+bool 'Prompt for development and/or incomplete code/drivers' CONFIG_EXPERIMENTAL
+bool 'Enable loadable module support' CONFIG_MODULES
+if [ "$CONFIG_MODULES" = "y" ]; then
+  bool 'Set version information on all symbols for modules' CONFIG_MODVERSIONS
+  bool 'Kernel module loader' CONFIG_KMOD
+fi
+
+if [ "$CONFIG_APUS" = "y" ]; then
+  define_bool CONFIG_PCI n
+else
+  define_bool CONFIG_PCI y
+fi
+
+bool 'PCI quirks' CONFIG_PCI_QUIRKS
+if [ "$CONFIG_PCI_QUIRKS" = "y" ]; then
+  bool '   PCI bridge optimization' CONFIG_PCI_OPTIMIZE
+fi
+
+bool 'Backward-compatible /proc/pci' CONFIG_PCI_OLD_PROC
+bool 'Networking support' CONFIG_NET
+bool 'Sysctl support' CONFIG_SYSCTL
+bool 'System V IPC' CONFIG_SYSVIPC
+bool 'BSD Process Accounting' CONFIG_BSD_PROCESS_ACCT
+
+# only elf supported, a.out is not -- Cort
+define_bool CONFIG_BINFMT_ELF y
+define_bool CONFIG_KERNEL_ELF y
+tristate 'Kernel support for MISC binaries' CONFIG_BINFMT_MISC
+tristate 'Kernel support for JAVA binaries (obsolete)' CONFIG_BINFMT_JAVA
+
+tristate 'Parallel port support' CONFIG_PARPORT
+if [ "$CONFIG_PARPORT" != "n" ]; then
+  dep_tristate '   PC-style hardware' CONFIG_PARPORT_PC $CONFIG_PARPORT
+  if [ "$CONFIG_PARPORT_PC" != "n" ]; then
+    bool '   Support foreign hardware' CONFIG_PARPORT_OTHER
+  fi
+fi
+
+bool 'Support for VGA Console' CONFIG_VGA_CONSOLE
+bool 'Support for frame buffer devices' CONFIG_FB
+if [ "$CONFIG_FB" = "y" ]; then
+  bool 'Backward compatibility mode for Xpmac' CONFIG_FB_COMPAT_XPMAC
+fi
+
+bool 'Power management support for PowerBook 3400/2400' CONFIG_PMAC_PBOOK
+bool 'Support for PowerMac keyboard' CONFIG_MAC_KEYBOARD
+bool 'Support for PowerMac floppy' CONFIG_MAC_FLOPPY
+bool 'Support for PowerMac serial ports' CONFIG_MAC_SERIAL
+bool 'Support for PowerMac ADB mouse' CONFIG_ADBMOUSE
+bool 'Support for PowerMac IDE devices (must also enable IDE)' CONFIG_BLK_DEV_IDE_PMAC
+bool 'Support for Open Firmware device tree in /proc' CONFIG_PROC_DEVICETREE
+bool 'Include kgdb kernel debugger' CONFIG_KGDB
+bool 'Include xmon kernel debugger' CONFIG_XMON
+bool 'Support for TotalImpact TotalMP' CONFIG_TOTALMP
+bool 'Support for early boot text console (BootX only)' CONFIG_BOOTX_TEXT
+
+if [ "$CONFIG_APUS" = "y" ]; then
+  define_bool CONFIG_FB_CONSOLE y
+  define_bool CONFIG_AMIGA y
+  define_bool CONFIG_ZORRO y
+  define_bool CONFIG_AMIGAMOUSE y
+  define_bool CONFIG_ABSTRACT_CONSOLE y
+  define_bool CONFIG_FB y
+  tristate 'Amiga builtin serial support' CONFIG_AMIGA_BUILTIN_SERIAL
+  tristate 'Parallel printer support' CONFIG_M68K_PRINTER
+  tristate 'GVP IO-Extender support' CONFIG_GVPIOEXT
+  dep_tristate 'GVP IO-Extender parallel printer support' CONFIG_GVPIOEXT_LP $CONFIG_GVPIOEXT
+  dep_tristate 'GVP IO-Extender PLIP support' CONFIG_GVPIOEXT_PLIP $CONFIG_GVPIOEXT
+  tristate 'Multiface Card III serial support' CONFIG_MULTIFACE_III_TTY
+  if [ "$CONFIG_AMIGA_BUILTIN_SERIAL" = "y" -o "$CONFIG_GVPIOEXT" = "y" -o \
+       "$CONFIG_MULTIFACE_III_TTY" = "y" ]; then
+    bool 'Support for serial port console' CONFIG_SERIAL_CONSOLE
+  fi
+  bool 'Use power LED as a heartbeat' CONFIG_HEARTBEAT
+  bool '/proc/hardware support' CONFIG_PROC_HARDWARE
+fi
+
+endmenu
+
+source drivers/pnp/Config.in
+source drivers/block/Config.in
+#source drivers.new/Config.in
+
+if [ "$CONFIG_NET" = "y" ]; then
+  source net/Config.in
+fi
+
+mainmenu_option next_comment
+comment 'SCSI support'
+tristate 'SCSI support' CONFIG_SCSI
+if [ "$CONFIG_SCSI" != "n" ]; then
+  source drivers/scsi/Config.in
+fi
+endmenu
+
+if [ "$CONFIG_NET" = "y" ]; then
+  mainmenu_option next_comment
+  comment 'Network device support'
+
+  bool 'Network device support' CONFIG_NETDEVICES
+  if [ "$CONFIG_NETDEVICES" = "y" ]; then
+    source drivers/net/Config.in
+  fi
+  endmenu
+fi
+
+source net/ax25/Config.in
+
+mainmenu_option next_comment
+comment 'ISDN subsystem'
+
+tristate 'ISDN support' CONFIG_ISDN
+if [ "$CONFIG_ISDN" != "n" ]; then
+  source drivers/isdn/Config.in
+fi
+endmenu
+
+mainmenu_option next_comment
+comment 'CD-ROM drivers (not for SCSI or IDE/ATAPI drives)'
+
+bool 'Support non-SCSI/IDE/ATAPI CDROM drives' CONFIG_CD_NO_IDESCSI
+if [ "$CONFIG_CD_NO_IDESCSI" != "n" ]; then
+  source drivers/cdrom/Config.in
+fi
+endmenu
+
+mainmenu_option next_comment
+comment 'Console drivers'
+source drivers/video/Config.in
+endmenu
+
+source drivers/char/Config.in
+source fs/Config.in
+
+mainmenu_option next_comment
+comment 'Sound'
+tristate 'Sound card support' CONFIG_SOUND
+if [ "$CONFIG_SOUND" != "n" ]; then
+  tristate 'Amiga or PowerMac DMA sound support' CONFIG_DMASOUND
+  source drivers/sound/Config.in
+fi
+
+endmenu

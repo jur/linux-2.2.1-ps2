@@ -1,0 +1,161 @@
+/* $Id: mips_ksyms.c,v 1.19 1999/04/11 18:37:55 harald Exp $
+ *
+ * Export MIPS-specific functions needed for loadable modules.
+ *
+ * This file is subject to the terms and conditions of the GNU General Public
+ * License.  See the file "COPYING" in the main directory of this archive
+ * for more details.
+ *
+ * Copyright (C) 1996, 1997, 1998 by Ralf Baechle
+ */
+#include <linux/config.h>
+#include <linux/module.h>
+#include <linux/string.h>
+#include <linux/mm.h>
+#include <linux/interrupt.h>
+#include <asm/irq.h>
+#include <linux/in6.h>
+#include <linux/pci.h>
+
+#include <asm/checksum.h>
+#include <asm/dma.h>
+#include <asm/floppy.h>
+#include <asm/io.h>
+#include <asm/page.h>
+#include <asm/pgtable.h>
+#include <asm/sgihpc.h>
+#include <asm/softirq.h>
+#include <asm/uaccess.h>
+
+extern void *__bzero(void *__s, size_t __count);
+extern long __strncpy_from_user_nocheck_asm(char *__to,
+                                            const char *__from, long __len);
+extern long __strncpy_from_user_asm(char *__to, const char *__from,
+                                    long __len);
+extern long __strlen_user_nocheck_asm(const char *s);
+extern long __strlen_user_asm(const char *s);
+
+EXPORT_SYMBOL(EISA_bus);
+
+/*
+ * String functions
+ */
+EXPORT_SYMBOL_NOVERS(memcmp);
+EXPORT_SYMBOL_NOVERS(memset);
+EXPORT_SYMBOL_NOVERS(memcpy);
+EXPORT_SYMBOL_NOVERS(memmove);
+EXPORT_SYMBOL_NOVERS(strcat);
+EXPORT_SYMBOL_NOVERS(strchr);
+EXPORT_SYMBOL_NOVERS(strlen);
+EXPORT_SYMBOL_NOVERS(strncat);
+EXPORT_SYMBOL_NOVERS(strnlen);
+EXPORT_SYMBOL_NOVERS(strrchr);
+EXPORT_SYMBOL_NOVERS(strtok);
+EXPORT_SYMBOL_NOVERS(strpbrk);
+
+EXPORT_SYMBOL(clear_page);
+EXPORT_SYMBOL(__mips_bh_counter);
+EXPORT_SYMBOL(local_bh_count);
+EXPORT_SYMBOL(local_irq_count);
+EXPORT_SYMBOL(enable_irq);
+EXPORT_SYMBOL(disable_irq);
+EXPORT_SYMBOL(kernel_thread);
+
+/*
+ * Userspace access stuff.
+ */
+EXPORT_SYMBOL_NOVERS(__copy_user);
+EXPORT_SYMBOL_NOVERS(__bzero);
+EXPORT_SYMBOL_NOVERS(__strncpy_from_user_nocheck_asm);
+EXPORT_SYMBOL_NOVERS(__strncpy_from_user_asm);
+EXPORT_SYMBOL_NOVERS(__strlen_user_nocheck_asm);
+EXPORT_SYMBOL_NOVERS(__strlen_user_asm);
+
+
+/* Networking helper routines. */
+EXPORT_SYMBOL(csum_partial_copy);
+
+/*
+ * Functions to control caches.
+ */
+EXPORT_SYMBOL(flush_page_to_ram);
+EXPORT_SYMBOL(flush_cache_all);
+EXPORT_SYMBOL(dma_cache_wback_inv);
+EXPORT_SYMBOL(dma_cache_inv);
+
+EXPORT_SYMBOL(invalid_pte_table);
+
+/*
+ * Base address of ports for Intel style I/O.
+ */
+EXPORT_SYMBOL(mips_io_port_base);
+
+/*
+ * Architecture specific stuff.
+ */
+#ifdef CONFIG_MIPS_JAZZ
+EXPORT_SYMBOL(vdma_alloc);
+EXPORT_SYMBOL(vdma_free);
+EXPORT_SYMBOL(vdma_log2phys);
+#endif
+
+#ifdef CONFIG_SGI
+EXPORT_SYMBOL(hpc3c0);
+#endif
+
+/*
+ * Kernel hacking ...
+ */
+#include <asm/branch.h>
+#include <linux/sched.h>
+
+int register_fpe(void (*handler)(struct pt_regs *regs, unsigned int fcr31));
+int unregister_fpe(void (*handler)(struct pt_regs *regs, unsigned int fcr31));
+
+#ifdef CONFIG_MIPS_FPE_MODULE
+EXPORT_SYMBOL(__compute_return_epc);
+EXPORT_SYMBOL(register_fpe);
+EXPORT_SYMBOL(unregister_fpe);
+#endif
+
+#ifdef CONFIG_VT
+EXPORT_SYMBOL(screen_info);
+#endif
+
+/*
+ *  perf counter support
+ */
+extern struct perf_ctrl_operations *perf_ctrl_ops;
+extern struct perf_sample_operations *perf_sample_ops;
+extern struct perf_counter_operations *perf_counter_ops;
+#ifdef  CONFIG_PERF_DEV_MODULE
+EXPORT_SYMBOL(perf_ctrl_ops);
+EXPORT_SYMBOL(perf_sample_ops);
+EXPORT_SYMBOL(perf_counter_ops);
+
+extern struct wait_queue *perf_sample_queue;
+EXPORT_SYMBOL(perf_sample_queue);
+#endif
+
+#ifdef CONFIG_PS2
+EXPORT_SYMBOL(init_mm);
+#endif
+
+
+#ifdef CONFIG_CPU_R5900
+/*
+ * 64bit div operations.
+ */
+typedef          int DItype     __attribute__ ((mode (DI)));
+typedef unsigned int UDItype    __attribute__ ((mode (DI)));
+
+extern DItype __divdi3 (DItype u, DItype v);
+extern UDItype __udivdi3 (UDItype u, UDItype v);
+extern DItype __moddi3 (DItype u, DItype v);
+extern UDItype __umoddi3 (UDItype u, UDItype v);
+
+EXPORT_SYMBOL(__divdi3);
+EXPORT_SYMBOL(__moddi3);
+EXPORT_SYMBOL(__udivdi3);
+EXPORT_SYMBOL(__umoddi3);
+#endif

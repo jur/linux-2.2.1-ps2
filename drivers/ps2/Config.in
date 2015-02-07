@@ -1,0 +1,22 @@
+#
+# PS2 device configuration
+#
+
+mainmenu_option next_comment
+comment 'PS2 device support'
+ 
+if [ "$CONFIG_PS2" = "y" ]; then
+    tristate 'Enable PS2 game pad device' CONFIG_PS2_PAD
+    tristate 'Enable PS2 CD/DVD ROM drive' CONFIG_PS2_CDVD
+    dep_tristate 'Enable PS2 Sound device' CONFIG_PS2_SD $CONFIG_SOUND_OSS
+    tristate 'Enable PS2 Memory Card drive' CONFIG_PS2_MC
+    tristate 'Enable PS2 Real Time Clock device' CONFIG_PS2_RTC
+# PS2 ethernet
+    bool 'PlayStation2 ethernet' CONFIG_PS2_ETHER
+    if [ "CONFIG_PS2_ETHER" != "n" ]; then
+	tristate 'SMAP support' CONFIG_PS2_ETHER_SMAP
+    fi
+    source drivers/ps2/mcfs/Config.in
+fi
+
+endmenu

@@ -1,0 +1,244 @@
+#
+# Automatically generated make config: don't edit
+#
+
+#
+# Code maturity level options
+#
+CONFIG_EXPERIMENTAL=y
+
+#
+# Loadable module support
+#
+# CONFIG_MODULES is not set
+# CONFIG_MODVERSIONS is not set
+# CONFIG_KMOD is not set
+
+#
+# Platform-dependent setup
+#
+CONFIG_AMIGA=y
+# CONFIG_ATARI is not set
+# CONFIG_MAC is not set
+
+#
+# Processor type
+#
+CONFIG_M68020=y
+CONFIG_M68030=y
+CONFIG_M68040=y
+# CONFIG_M68060 is not set
+# CONFIG_ADVANCED is not set
+# CONFIG_SINGLE_MEMORY_CHUNK is not set
+# CONFIG_RMW_INSNS is not set
+
+#
+# General setup
+#
+CONFIG_NET=y
+CONFIG_SYSVIPC=y
+CONFIG_SYSCTL=y
+CONFIG_BINFMT_AOUT=y
+CONFIG_BINFMT_ELF=y
+CONFIG_ZORRO=y
+# CONFIG_AMIGA_GSP is not set
+# CONFIG_GSP_RESOLVER is not set
+# CONFIG_GSP_A2410 is not set
+# CONFIG_AMIGA_PCMCIA is not set
+# CONFIG_HEARTBEAT is not set
+CONFIG_PROC_HARDWARE=y
+
+#
+# Block device driver configuration
+#
+CONFIG_AMIGA_FLOPPY=y
+CONFIG_ATARI_FLOPPY=y
+# CONFIG_BLK_DEV_LOOP is not set
+# CONFIG_BLK_DEV_IDE is not set
+# CONFIG_BLK_DEV_IDEDISK is not set
+# CONFIG_BLK_DEV_IDECD is not set
+# CONFIG_BLK_DEV_IDETAPE is not set
+# CONFIG_BLK_DEV_IDEFLOPPY is not set
+# CONFIG_BLK_DEV_IDESCSI is not set
+# CONFIG_BLK_DEV_IDEDOUBLER is not set
+# CONFIG_AMIGA_Z2RAM is not set
+# CONFIG_ATARI_ACSI is not set
+# CONFIG_ACSI_MULTI_LUN is not set
+# CONFIG_ATARI_SLM
+# CONFIG_BLK_DEV_LOOP is not set
+# CONFIG_BLK_DEV_MD is not set
+# CONFIG_MD_LINEAR is not set
+# CONFIG_MD_STRIPED is not set
+CONFIG_BLK_DEV_RAM=y
+CONFIG_BLK_DEV_INITRD=y
+
+#
+# Networking options
+#
+CONFIG_PACKET=y
+# CONFIG_NETLINK is not set
+# CONFIG_FIREWALL is not set
+# CONFIG_NET_ALIAS is not set
+# CONFIG_FILTER is not set
+CONFIG_UNIX=y
+CONFIG_INET=y
+# CONFIG_IP_MULTICAST is not set
+# CONFIG_IP_ADVANCED_ROUTER is not set
+# CONFIG_IP_PNP is not set
+# CONFIG_IP_ROUTER is not set
+# CONFIG_NET_IPIP is not set
+# CONFIG_NET_IPGRE is not set
+# CONFIG_IP_ALIAS is not set
+# CONFIG_SYN_COOKIES is not set
+
+#
+# (it is safe to leave these untouched)
+#
+# CONFIG_INET_RARP is not set
+CONFIG_IP_NOSR=y
+# CONFIG_SKB_LARGE is not set
+# CONFIG_IPV6 is not set
+
+#
+#  
+#
+# CONFIG_IPX is not set
+# CONFIG_ATALK is not set
+# CONFIG_X25 is not set
+# CONFIG_LAPB is not set
+# CONFIG_BRIDGE is not set
+# CONFIG_LLC is not set
+# CONFIG_ECONET is not set
+# CONFIG_WAN_ROUTER is not set
+# CONFIG_NET_FASTROUTE is not set
+# CONFIG_NET_HW_FLOWCONTROL is not set
+# CONFIG_CPU_IS_SLOW is not set
+
+#
+# QoS and/or fair queueing
+#
+# CONFIG_NET_SCHED is not set
+
+#
+# SCSI support
+#
+CONFIG_SCSI=y
+
+#
+# SCSI support type (disk, tape, CDrom)
+#
+CONFIG_BLK_DEV_SD=y
+CONFIG_CHR_DEV_ST=y
+CONFIG_BLK_DEV_SR=y
+# CONFIG_BLK_DEV_SR_VENDOR is not set
+# CONFIG_CHR_DEV_SG is not set
+
+#
+# Some SCSI devices (e.g. CD jukebox) support multiple LUNs
+#
+# CONFIG_SCSI_MULTI_LUN is not set
+CONFIG_SCSI_CONSTANTS=y
+# CONFIG_SCSI_LOGGING is not set
+
+#
+# SCSI low-level drivers
+#
+CONFIG_A3000_SCSI=y
+CONFIG_A2091_SCSI=y
+CONFIG_GVP11_SCSI=y
+# CONFIG_CYBERSTORM_SCSI is not set
+# CONFIG_CYBERSTORMII_SCSI is not set
+# CONFIG_BLZ2060_SCSI is not set
+# CONFIG_BLZ1230_SCSI is not set
+# CONFIG_FASTLANE_SCSI is not set
+# CONFIG_A4000T_SCSI is not set
+# CONFIG_A4091_SCSI is not set
+# CONFIG_WARPENGINE_SCSI is not set
+# CONFIG_BLZ603EPLUS_SCSI is not set
+CONFIG_ATARI_SCSI=y
+# CONFIG_ATARI_SCSI_TOSHIBA_DELAY is not set
+# CONFIG_ATARI_SCSI_RESET_BOOT is not set
+
+#
+# Network device support
+#
+CONFIG_NETDEVICES=y
+# CONFIG_DUMMY is not set
+# CONFIG_SLIP is not set
+# CONFIG_PPP is not set
+# CONFIG_ARIADNE is not set
+# CONFIG_ARIADNE2 is not set
+# CONFIG_A2065 is not set
+# CONFIG_HYDRA is not set
+# CONFIG_APNE is not set
+# CONFIG_ATARILANCE is not set
+# CONFIG_ATARI_BIONET is not set
+# CONFIG_ATARI_PAMSNET is not set
+
+#
+# Filesystems
+#
+# CONFIG_QUOTA is not set
+CONFIG_MINIX_FS=y
+CONFIG_EXT2_FS=y
+CONFIG_FAT_FS=y
+CONFIG_MSDOS_FS=y
+# CONFIG_VFAT_FS is not set
+# CONFIG_UMSDOS_FS is not set
+# CONFIG_MSDOS_PARTITION is not set
+CONFIG_PROC_FS=y
+CONFIG_NFS_FS=y
+# CONFIG_ROOT_NFS is not set
+# CONFIG_SMB_FS is not set
+# CONFIG_ISO9660_FS is not set
+# CONFIG_HPFS_FS is not set
+# CONFIG_SYSV_FS is not set
+# CONFIG_AFFS_FS is not set
+# CONFIG_ROMFS_FS is not set
+# CONFIG_UFS_FS is not set
+
+#
+# Frame buffer devices
+#
+CONFIG_FB_AMIGA=y
+CONFIG_FB_AMIGA_OCS=y
+CONFIG_FB_AMIGA_ECS=y
+CONFIG_FB_AMIGA_AGA=y
+# CONFIG_FB_CYBER is not set
+# CONFIG_FB_VIRGE is not set
+# CONFIG_FB_CVPPC is not set
+# CONFIG_FB_RETINAZ3 is not set
+# CONFIG_FB_CLGEN is not set
+# CONFIG_FB_ATARI is not set
+# CONFIG_FB_VIRTUAL is not set
+# CONFIG_FBCON_ADVANCED is not set
+
+CONFIG_NLS_CODEPAGE_437=y
+
+#
+# Character devices
+#
+CONFIG_VT=y
+CONFIG_VT_CONSOLE=y
+# CONFIG_M68K_PRINTER is not set
+CONFIG_AMIGAMOUSE=y
+CONFIG_ATARIMOUSE=y
+CONFIG_AMIGA_BUILTIN_SERIAL=y
+# CONFIG_GVPIOEXT is not set
+# CONFIG_GVPIOEXT_LP is not set
+# CONFIG_GVPIOEXT_PLIP is not set
+# CONFIG_MULTIFACE_III_TTY is not set
+# CONFIG_USERIAL is not set
+# CONFIG_WATCHDOG is not set
+# CONFIG_UMISC is not set
+
+#
+# Sound
+#
+# CONFIG_SOUND is not set
+# CONFIG_DMASOUND is not set
+
+#
+# Kernel hacking
+#
+CONFIG_SCSI_CONSTANTS=y

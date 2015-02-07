@@ -1,0 +1,14 @@
+#
+# PS2 SBIOS configuration
+#
+
+mainmenu_option next_comment
+comment 'PS2 SBIOS stuff'
+ 
+if [ "$CONFIG_PS2" = "y" ]; then
+    tristate 'Enable PS2 SBIOS lock utility' CONFIG_PS2_LOCK
+    bool 'Support for old style boot information' CONFIG_PS2_COMPAT_OLDBOOTINFO
+    bool 'Enable SBIOS version check' CONFIG_PS2_SBIOS_VER_CHECK
+fi
+
+endmenu

@@ -1,0 +1,12 @@
+#
+# PS2 Memory Card file system configutration
+#
+
+mainmenu_option next_comment
+comment 'PS2 Memory Card file system  support'
+ 
+if [ "$CONFIG_PS2" = "y" ]; then
+    dep_tristate 'Enable PS2 Memory Card File System' CONFIG_PS2_MCFS $CONFIG_PS2_MC
+fi
+
+endmenu

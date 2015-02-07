@@ -1,0 +1,42 @@
+
+Maintainers and developers for networking code sections
+
+Code Section		Bug Report Contact
+-------------------+-------------------------------------------
+802 [other	]	alan@lxorguk.ukuu.org.uk	
+    [token ring	]	p.norton@computer.org
+appletalk		Jay.Schulist@spacs.k12.wi.us
+ax25			g4klx@g4klx.demon.co.uk
+core			alan@lxorguk.ukuu.org.uk
+decnet			SteveW@ACM.org
+ethernet		alan@lxorguk.ukuu.org.uk
+ipv4			davem@caip.rutgers.edu,Eric.Schenk@dna.lth.se
+ipv6			davem@caip.rutgers.edu,Eric.Schenk@dna.lth.se
+ipx/spx			Jay.Schulist@spacs.k12.wi.us
+lapb			g4klx@g4klx.demon.co.uk
+netrom			g4klx@g4klx.demon.co.uk
+rose			g4klx@g4klx.demon.co.uk
+wanrouter		genek@compuserve.com and dm@sangoma.com
+unix			alan@lxorguk.ukuu.org.uk
+x25			g4klx@g4klx.demon.co.uk
+
+
+	If in doubt contact me <alan@lxorguk.ukuu.org.uk> first.
+
+---------------------------------------------------------------------------
+
+For commercial UK custom Linux networking projects, drivers and development
+(but not free support!) I can be contacted via
+
+	CymruNET Ltd, The Innovation Centre, University Of Wales
+		Swansea SA2 8PP.  
+	Fax: +44 1792 295811
+	Tel: +44 1792 295213
+
+	Email: alan@cymru.net
+
+Please don't send commercial queries to my .ac.uk email address as I have that
+in an academic and _not_ commercial capacity. On the other hand feel
+free to send bug reports, queries and enhancements that way.
+
+Alan

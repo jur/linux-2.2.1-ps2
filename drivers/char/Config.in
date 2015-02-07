@@ -1,0 +1,194 @@
+#
+# Character device configuration
+#
+mainmenu_option next_comment
+comment 'Character devices'
+
+bool 'Virtual terminal' CONFIG_VT
+if [ "$CONFIG_VT" = "y" ]; then
+    bool 'Support for console on virtual terminal' CONFIG_VT_CONSOLE
+fi
+
+if [ "$CONFIG_PS2" = "y" ] ; then
+    bool 'Enable PROM PRINTK(for debug)' CONFIG_PROM_PRINTK
+fi
+
+tristate 'Standard/generic (dumb) serial support' CONFIG_SERIAL
+if [ "$CONFIG_SERIAL" = "y" ]; then
+   bool '   Support for console on serial port' CONFIG_SERIAL_CONSOLE
+fi
+bool 'Extended dumb serial driver options' CONFIG_SERIAL_EXTENDED
+if [ "$CONFIG_SERIAL_EXTENDED" = "y" ]; then
+   bool '   Support more than 4 serial ports' CONFIG_SERIAL_MANY_PORTS
+   bool '   Support for sharing serial interrupts' CONFIG_SERIAL_SHARE_IRQ
+   bool '   Autodetect IRQ on standard ports (unsafe)' CONFIG_SERIAL_DETECT_IRQ
+   bool '   Support special multiport boards' CONFIG_SERIAL_MULTIPORT
+   bool '   Support the Bell Technologies HUB6 card' CONFIG_HUB6
+fi
+bool 'Non-standard serial port support' CONFIG_SERIAL_NONSTANDARD
+if [ "$CONFIG_SERIAL_NONSTANDARD" = "y" ]; then
+   tristate 'Comtrol Rocketport support' CONFIG_ROCKETPORT
+   tristate 'Digiboard Intelligent Async Support' CONFIG_DIGIEPCA
+   if [ "$CONFIG_DIGIEPCA" = "n" ]; then
+      tristate 'Digiboard PC/Xx Support' CONFIG_DIGI
+   fi
+   tristate 'Cyclades async mux support' CONFIG_CYCLADES
+   bool 'Stallion multiport serial support' CONFIG_STALDRV
+   if [ "$CONFIG_STALDRV" = "y" ]; then
+     tristate '  Stallion EasyIO or EC8/32 support' CONFIG_STALLION
+     tristate '  Stallion EC8/64, ONboard, Brumby support' CONFIG_ISTALLION
+   fi
+   tristate 'SDL RISCom/8 card support' CONFIG_RISCOM8
+   tristate 'Specialix IO8+ card support' CONFIG_SPECIALIX
+   if [ "$CONFIG_SPECIALIX" != "n" ]; then
+     bool 'Specialix DTR/RTS pin is RTS' CONFIG_SPECIALIX_RTSCTS
+   fi 
+   tristate 'Hayes ESP serial port support' CONFIG_ESPSERIAL
+   if [ "$CONFIG_EXPERIMENTAL" = "y" ]; then
+	dep_tristate 'Multi-Tech multiport card support' CONFIG_ISI m
+   fi
+fi
+bool 'Unix98 PTY support' CONFIG_UNIX98_PTYS
+if [ "$CONFIG_UNIX98_PTYS" = "y" ]; then
+	int 'Maximum number of Unix98 PTYs in use (0-2048)' CONFIG_UNIX98_PTY_COUNT 256
+fi
+if [ "$CONFIG_PARPORT" != "n" ]; then
+  dep_tristate 'Parallel printer support' CONFIG_PRINTER $CONFIG_PARPORT
+  if [ "$CONFIG_PRINTER" != "n" ]; then
+    bool '  Support IEEE1284 status readback' CONFIG_PRINTER_READBACK
+  fi
+fi
+
+bool 'Mouse Support (not serial mice)' CONFIG_MOUSE
+if [ "$CONFIG_MOUSE" = "y" ]; then
+	mainmenu_option next_comment
+	comment 'Mice'
+	tristate 'ATIXL busmouse support' CONFIG_ATIXL_BUSMOUSE
+	tristate 'Logitech busmouse support' CONFIG_BUSMOUSE
+	tristate 'Microsoft busmouse support' CONFIG_MS_BUSMOUSE
+	bool 'PS/2 mouse (aka "auxiliary device") support' CONFIG_PSMOUSE
+	tristate 'C&T 82C710 mouse port support (as on TI Travelmate)' CONFIG_82C710_MOUSE
+	tristate 'PC110 digitizer pad support' CONFIG_PC110_PAD
+	endmenu
+fi
+
+tristate 'QIC-02 tape support' CONFIG_QIC02_TAPE
+if [ "$CONFIG_QIC02_TAPE" != "n" ]; then
+  bool 'Do you want runtime configuration for QIC-02' CONFIG_QIC02_DYNCONF
+  if [ "$CONFIG_QIC02_DYNCONF" != "y" ]; then
+    comment '   Edit configuration parameters in ./include/linux/tpqic02.h!'
+  else
+    comment '   Setting runtime QIC-02 configuration is done with qic02conf'
+    comment '   from the tpqic02-support package.  It is available at'
+    comment '   metalab.unc.edu or ftp://titus.cfw.com/pub/Linux/util/'
+  fi
+fi
+
+bool 'Watchdog Timer Support'	CONFIG_WATCHDOG
+if [ "$CONFIG_WATCHDOG" != "n" ]; then
+  mainmenu_option next_comment
+  comment 'Watchdog Cards'
+  bool '   Disable watchdog shutdown on close' CONFIG_WATCHDOG_NOWAYOUT
+  tristate '   WDT Watchdog timer' CONFIG_WDT
+  if [ "$CONFIG_WDT" != "n" ]; then
+     bool '       WDT501 features' CONFIG_WDT_501
+     if [ "$CONFIG_WDT_501" = "y" ]; then
+         bool '       Fan Tachometer' CONFIG_WDT_501_FAN
+     fi
+  fi
+  tristate '   Software Watchdog' CONFIG_SOFT_WATCHDOG
+  tristate '   Berkshire Products PC Watchdog' CONFIG_PCWATCHDOG
+  tristate '   Acquire SBC Watchdog Timer' CONFIG_ACQUIRE_WDT
+  endmenu
+fi
+
+
+tristate '/dev/nvram support' CONFIG_NVRAM
+bool 'Enhanced Real Time Clock Support' CONFIG_RTC
+if [ "$CONFIG_ALPHA_BOOK1" = "y" ]; then
+  bool 'Tadpole ANA H8 Support'  CONFIG_H8
+fi
+
+if [ "$CONFIG_MODULES" = "y" ]; then
+  dep_tristate 'Enable display kernel symbols on Oops' CONFIG_KSYMTAB m
+fi
+
+if [ "$CONFIG_CPU_R5900" = "y" ]; then
+    tristate 'Enable perf. counter device support' CONFIG_PERF_DEV
+fi
+if [ "$CONFIG_CPU_R3000" = "y"  -o  "$CONFIG_CPU_R5900" = "y" ]; then
+    tristate 'Enable MIPS ISA 1 TEST AND SET device support' CONFIG_MIPS_TST_DEV
+fi
+
+
+mainmenu_option next_comment
+comment 'Video For Linux'
+
+tristate 'Video For Linux' CONFIG_VIDEO_DEV
+if [ "$CONFIG_VIDEO_DEV" != "n" ]; then
+  dep_tristate 'AIMSlab RadioTrack (aka RadioReveal) support' CONFIG_RADIO_RTRACK $CONFIG_VIDEO_DEV
+  if [ "$CONFIG_RADIO_RTRACK" = "y" ]; then
+    hex '  RadioTrack i/o port (0x20f or 0x30f)' CONFIG_RADIO_RTRACK_PORT 20f
+  fi
+  dep_tristate 'AIMSlab RadioTrack II support' CONFIG_RADIO_RTRACK2 $CONFIG_VIDEO_DEV
+  if [ "$CONFIG_RADIO_RTRACK2" = "y" ]; then
+    hex '  RadioTrack II i/o port (0x20c or 0x30c)' CONFIG_RADIO_RTRACK2_PORT 30c
+  fi
+  dep_tristate 'Aztech/Packard Bell Radio' CONFIG_RADIO_AZTECH $CONFIG_VIDEO_DEV
+  if [ "$CONFIG_RADIO_AZTECH" = "y" ]; then
+    hex '  Aztech/Packard Bell I/O port (0x350 or 0x358)' CONFIG_RADIO_AZTECH_PORT 350
+  fi
+  dep_tristate 'Miro PCM20 Radio' CONFIG_RADIO_MIROPCM20 $CONFIG_VIDEO_DEV
+  dep_tristate 'GemTek Radio Card support' CONFIG_RADIO_GEMTEK $CONFIG_VIDEO_DEV
+  if [ "$CONFIG_RADIO_GEMTEK" = "y" ]; then
+    hex '  GemTek i/o port (0x20c, 0x30c, 0x24c or 0x34c)' CONFIG_RADIO_GEMTEK_PORT 34c
+  fi
+  if [ "$CONFIG_PCI" != "n" ]; then
+    dep_tristate 'BT848 Video For Linux' CONFIG_VIDEO_BT848 $CONFIG_VIDEO_DEV
+  fi
+  if [ "$CONFIG_PARPORT" != "n" ]; then
+    dep_tristate 'Quickcam BW Video For Linux' CONFIG_VIDEO_BWQCAM $CONFIG_VIDEO_DEV
+    dep_tristate 'Colour QuickCam Video For Linux (EXPERIMENTAL)' CONFIG_VIDEO_CQCAM $CONFIG_VIDEO_DEV
+  fi
+  if [ "$CONFIG_EXPERIMENTAL" = "y" ]; then
+    if [ "$CONFIG_SGI" = "y" ]; then
+      dep_tristate 'SGI Vino Video For Linux (EXPERIMENTAL)' CONFIG_VIDEO_VINO $CONFIG_VIDEO_DEV
+    fi
+  fi
+  dep_tristate 'Mediavision Pro Movie Studio Video For Linux' CONFIG_VIDEO_PMS $CONFIG_VIDEO_DEV
+  dep_tristate 'SAA5249 Teletext processor' CONFIG_VIDEO_SAA5249 $CONFIG_VIDEO_DEV
+  dep_tristate 'SF16FMI Radio' CONFIG_RADIO_SF16FMI $CONFIG_VIDEO_DEV
+  if [ "$CONFIG_RADIO_SF16FMI" = "y" ]; then
+    hex '  SF16FMI I/O port (0x284 or 0x384)' CONFIG_RADIO_SF16FMI_PORT 284
+  fi
+  dep_tristate 'Zoltrix Radio' CONFIG_RADIO_ZOLTRIX $CONFIG_VIDEO_DEV
+  if [ "$CONFIG_RADIO_ZOLTRIX" = "y" ]; then
+    hex '  ZOLTRIX I/O port (0x20c or 0x30c)' CONFIG_RADIO_ZOLTRIX_PORT 20c
+  fi
+fi
+
+endmenu
+
+mainmenu_option next_comment
+comment 'Joystick support'
+
+tristate 'Joystick support' CONFIG_JOYSTICK
+if [ "$CONFIG_JOYSTICK" != "n" ]; then
+  source drivers/char/joystick/Config.in
+fi
+endmenu
+
+mainmenu_option next_comment
+comment 'Ftape, the floppy tape device driver'
+tristate 'Ftape (QIC-80/Travan) support' CONFIG_FTAPE
+if [ "$CONFIG_FTAPE" != "n" ]; then
+  source drivers/char/ftape/Config.in
+fi
+endmenu
+
+mainmenu_option next_comment
+comment 'test device driver'
+tristate 'test driver support' CONFIG_TESTDEV
+endmenu
+
+endmenu

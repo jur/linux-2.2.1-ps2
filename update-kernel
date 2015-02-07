@@ -1,0 +1,34 @@
+#! /bin/bash
+
+CAESAR=`pwd`
+
+export PATH=$PATH:/usr/local/mipsEEel-linux/bin
+export CVSROOT=icvs:/cvsroot/caesar
+
+cvs update -d
+
+rm -f .config
+cp config_t10k_full .config
+echo "Making t10k kernel and modules ..."
+make oldconfig dep clean all modules
+echo "Removing old t10k kernel and modules ..."
+rm -rf ../t10k-kernel
+echo "Making t10k kernel and modules directories ..."
+mkdir ../t10k-kernel
+mkdir ../t10k-kernel/modules
+echo "Copying t10k kernel and modules ..."
+cp System.map vmlinux ../t10k-kernel
+cp modules/*.o ../t10k-kernel/modules
+
+rm -f .config
+cp config_ps2_full .config
+echo "Making ps2 kernel and modules ..."
+make oldconfig dep clean all modules
+echo "Removing old ps2 kernel and modules ..."
+rm -rf ../ps2-kernel
+echo "Making ps2 kernel and modules directories ..."
+mkdir ../ps2-kernel
+mkdir ../ps2-kernel/modules
+echo "Copying ps2 kernel and modules ..."
+cp System.map vmlinux ../ps2-kernel
+cp modules/*.o ../ps2-kernel/modules

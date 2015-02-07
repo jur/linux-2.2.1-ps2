@@ -1,0 +1,50 @@
+This directory contains the version 0.8 release of                  02/10/1999
+Heinz Mauelshagen's LVM (Logical Volume Manager) for Linux
+
+
+Look for newer versions and additional information at 
+http://linux.msede.com/lvm
+
+Files:
+lvm_0.8.tar.gz       - LVM user mode tools (compatible with v0.6 kernel patch)
+patch-2.2.10-LVM.gz  - LVM kernel patch for 2.2.10 kernel
+patch-2.3.10-LVM.gz  - LVM kernel patch for 2.3.10 kernel
+
+What is LVM:
+LVM includes all of the support for handling read/write operations on
+physical volumes (hard disks, RAID-Systems, magneto optical, etc.,
+multiple devices (MD), see mdadd(8) or even loop devices, see losetup(8)),
+creating volume groups from one or more physical volumes and creating
+one or more logical volumes in volume groups.
+
+LVM is free software.
+
+See the file COPYING and COPYING.LIB for copying permission.
+
+
+See INSTALL for a copy of the installation information as plain ASCII.
+
+See LVM-HOWTO for further information.
+
+
+
+Please send information of the following
+
+class                        to
+-----------------            -------------------------------------------
+bug reports                  linux-lvm-bug@ez-darmstadt.telekom.de
+
+patches                      linux-lvm-patch@ez-darmstadt.telekom.de
+
+enhancement ideas            linux-lvm-enhancement@ez-darmstadt.telekom.de
+
+other information            linux-lvm@ez-darmstadt.telekom.de
+
+Please read the FAQ _first_ and remember to tell me about your hardware/software
+configuration and the steps you made (stdout, stderr with tool option -d)
+leading to your problem.
+
+
+Thank you 8*)
+Heinz Mauelshagen
+
